@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -16,10 +17,16 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip swosh;
 
     [SerializeField] private float jumpForce;
+    [SerializeField] private int points;
+    [SerializeField] private TextMeshProUGUI scoreText;
+
+    public bool gameOver;
 
     // Start is called before the first frame update
     void Start()
     {
+        points = 0;
+        scoreText.text = "0";
         playerRb = GetComponent<Rigidbody>();
         playerAudio = GameObject.Find("Main Camera").GetComponent<AudioSource>();
     }
@@ -32,9 +39,10 @@ public class PlayerController : MonoBehaviour
 
     private void MovePlayer()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(Input.GetKeyDown(KeyCode.Space) && gameOver == false)
         {
             playerRb.velocity = new Vector3(0, jumpForce, 0);
+            playerAudio.PlayOneShot(flap, 1.0f);
         }
     }
 
@@ -45,17 +53,25 @@ public class PlayerController : MonoBehaviour
             PlayerDie();
         } else if (other.gameObject.CompareTag("Middle Collider"))
         {
-            AddPoint();
+            AddPoint(1);
         }
     }
 
-    private void AddPoint()
+    private void AddPoint(int pointsToAdd)
     {
         playerAudio.PlayOneShot(point, 1.0f);
+        points += pointsToAdd;
+
+        string pointsString = points.ToString();
+        scoreText.text = pointsString;
     }
 
     private void PlayerDie()
     {
-        playerAudio.PlayOneShot(die, 1.0f);
+        if (gameOver == false)
+        {
+            playerAudio.PlayOneShot(die, 1.0f);
+            gameOver = true;
+        }
     }
 }
