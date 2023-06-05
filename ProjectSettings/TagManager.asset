@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Middle Collider
   - Pipe
+  - Pipe Sensor
+  - Ground
   layers:
   - Default
   - TransparentFX

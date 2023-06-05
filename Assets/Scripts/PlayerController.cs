@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using TMPro;
+using UnityEditor.ProBuilder;
 
 public class PlayerController : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce;
     [SerializeField] private int points;
     [SerializeField] private TextMeshProUGUI scoreText;
+    public bool tooHigh;
 
     public bool gameOver;
 
@@ -34,21 +36,39 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        MovePlayer();  
+        MovePlayer();
+
+
+           
     }
 
     private void MovePlayer()
     {
-        if(Input.GetKeyDown(KeyCode.Space) && gameOver == false)
+        if(Input.GetKeyDown(KeyCode.Space) && gameOver == false && tooHigh == false)
         {
             playerRb.velocity = new Vector3(0, jumpForce, 0);
+            // transform.rotation = Quaternion.Euler(0, 0, 50);
+            transform.eulerAngles = new Vector3(0, 0, 45);
             playerAudio.PlayOneShot(flap, 1.0f);
+        }
+
+        if (gameOver == false)
+        {
+            transform.Rotate(0, 0, -1 * 100 * Time.deltaTime);
+        }
+
+        if (transform.position.y > 15)
+        {
+            tooHigh = true;
+        } else
+        {
+            tooHigh = false;
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("Pipe"))
+        if(other.gameObject.CompareTag("Pipe") || other.gameObject.CompareTag("Ground"))
         {
             PlayerDie();
         } else if (other.gameObject.CompareTag("Middle Collider"))
