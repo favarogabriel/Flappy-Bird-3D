@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using TMPro;
-using UnityEditor.UI;
-using UnityEditor.ProBuilder;
 using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
