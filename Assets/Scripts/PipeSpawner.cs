@@ -29,7 +29,7 @@ public class PipeSpawner : MonoBehaviour
         {
             float randomHeight = Random.Range(minHeight, maxHeight);
 
-            Vector3 spawnPos = new Vector3(36, randomHeight, 15.55f);
+            Vector3 spawnPos = new Vector3(10, randomHeight, 15.55f);
             Instantiate(pipe, spawnPos, pipe.transform.rotation);
         }
     }
