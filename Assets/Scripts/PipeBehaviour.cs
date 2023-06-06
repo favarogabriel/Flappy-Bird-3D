@@ -16,7 +16,7 @@ public class PipeBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerControllerScript.gameOver == false)
+        if (playerControllerScript.gameOver == false && playerControllerScript.gameIsOn == true)
         {
             transform.Translate(Vector3.left * pipeSpeed * Time.deltaTime);
         }

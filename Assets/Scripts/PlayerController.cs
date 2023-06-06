@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using TMPro;
+using UnityEditor.UI;
 using UnityEditor.ProBuilder;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -20,15 +22,25 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce;
     [SerializeField] private int points;
     [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI restartScoreText;
+
+    [SerializeField] private GameObject startMenu;
+    [SerializeField] private GameObject restartMenu;
+    [SerializeField] private GameObject score;
+
+    [SerializeField] private GameObject bronzeMedal;
+    [SerializeField] private GameObject silverMedal;
+    [SerializeField] private GameObject goldMedal;
+
+
     public bool tooHigh;
 
     public bool gameOver;
+    public bool gameIsOn;
 
     // Start is called before the first frame update
     void Start()
     {
-        points = 0;
-        scoreText.text = "0";
         playerRb = GetComponent<Rigidbody>();
         playerAudio = GameObject.Find("Main Camera").GetComponent<AudioSource>();
     }
@@ -37,14 +49,62 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         MovePlayer();
+        StartGame();
+        RestartGame();
+    }
 
+    private void StartGame()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && gameIsOn == false)
+        {
+            points = 0;
+            scoreText.text = "0";
+            startMenu.SetActive(false);
+            score.SetActive(true);
+            gameIsOn = true;
+            playerRb.isKinematic = false;
+            playerRb.velocity = new Vector3(0, jumpForce, 0);
+            transform.eulerAngles = new Vector3(0, 0, 45);
+            playerAudio.PlayOneShot(flap, 1.0f);
+        }
 
-           
+        if (gameIsOn == false)
+        {
+            playerRb.isKinematic = true;
+
+        }
+    }
+
+    private void OpenRestartMenu()
+    {
+        restartMenu.SetActive(true);
+        score.SetActive(false);
+        string pointsString = points.ToString();
+        restartScoreText.text = pointsString;
+
+        if(points > 19 && points < 29)
+        {
+            bronzeMedal.SetActive(true);
+        } else if (points > 29 && points < 39)
+        {
+            silverMedal.SetActive(true);
+        } else if (points > 39)
+        {
+            goldMedal.SetActive(true);
+        } 
+    }
+
+    private void RestartGame()
+    {
+        if (restartMenu.activeSelf == true && Input.GetKeyDown(KeyCode.Space))
+        {
+            SceneManager.LoadScene("Jogo");
+        }
     }
 
     private void MovePlayer()
     {
-        if(Input.GetKeyDown(KeyCode.Space) && gameOver == false && tooHigh == false)
+        if(Input.GetKeyDown(KeyCode.Space) && gameOver == false && tooHigh == false && gameIsOn == true)
         {
             playerRb.velocity = new Vector3(0, jumpForce, 0);
             // transform.rotation = Quaternion.Euler(0, 0, 50);
@@ -52,7 +112,7 @@ public class PlayerController : MonoBehaviour
             playerAudio.PlayOneShot(flap, 1.0f);
         }
 
-        if (gameOver == false)
+        if (gameOver == false && gameIsOn == true)
         {
             transform.Rotate(0, 0, -1 * 100 * Time.deltaTime);
         }
@@ -77,7 +137,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void AddPoint(int pointsToAdd)
+    public void AddPoint(int pointsToAdd)
     {
         playerAudio.PlayOneShot(point, 1.0f);
         points += pointsToAdd;
@@ -92,6 +152,7 @@ public class PlayerController : MonoBehaviour
         {
             playerAudio.PlayOneShot(die, 1.0f);
             gameOver = true;
+            OpenRestartMenu();
         }
     }
 }

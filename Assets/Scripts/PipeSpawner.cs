@@ -25,7 +25,7 @@ public class PipeSpawner : MonoBehaviour
     {
         float maxHeight = 6.5f;
         float minHeight = 0.0f;
-        if (playerControllerScript.gameOver == false)
+        if (playerControllerScript.gameOver == false && playerControllerScript.gameIsOn == true)
         {
             float randomHeight = Random.Range(minHeight, maxHeight);
 
