@@ -35,10 +35,12 @@ public class PlayerController : MonoBehaviour
 
     public bool gameOver;
     public bool gameIsOn;
+    private bool restartDelay;
 
     // Start is called before the first frame update
     void Start()
     {
+        restartDelay = true;
         playerRb = GetComponent<Rigidbody>();
         playerAudio = GameObject.Find("Main Camera").GetComponent<AudioSource>();
     }
@@ -79,6 +81,7 @@ public class PlayerController : MonoBehaviour
         score.SetActive(false);
         string pointsString = points.ToString();
         restartScoreText.text = pointsString;
+        StartCoroutine("DelayForRestart");
 
         if(points > 19 && points < 29)
         {
@@ -92,9 +95,15 @@ public class PlayerController : MonoBehaviour
         } 
     }
 
+    private IEnumerator DelayForRestart()
+    {
+        yield return new WaitForSeconds(0.5f);
+        restartDelay = false;
+    }
+
     private void RestartGame()
     {
-        if (restartMenu.activeSelf == true && Input.GetKeyDown(KeyCode.Space))
+        if (restartMenu.activeSelf == true && Input.GetKeyDown(KeyCode.Space) && restartDelay == false)
         {
             SceneManager.LoadScene("Jogo");
         }
